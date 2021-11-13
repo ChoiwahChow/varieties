@@ -10,6 +10,13 @@ import sys
 from var_gen import gen_varieties
 
 
+comment_lines = ['% This Mace4 inputs file is based on the paper https://arxiv.org/pdf/1911.05817.pdf.\n',
+                 '% Figure 1 on page 5 shows the lattice of subvarieties of bands.\n',
+                 '% Level 0 is the bottom row (with only one node 0), level 1 is the row with LZ, SL and RZ, etc.\n',
+                 '% Staring at level 4, there are always 4 branches (lines), and they are numbered 1 to 4 from left to right\n',
+                 '% The top end of the branch (line) is a variety, and the bottom end of the branch is a subvariety.\n'
+                 '% The formulas in this file is to find a model in the variety but not in the subvariety.\n',
+                 '% sos is the variety, and goals represent the subvariety.\n']
 sos_line = "\nformulas(sos).\n"
 goal_line = "\nformulas(goals).\n"
 end_line = "end_of_list.\n"
@@ -107,6 +114,7 @@ def write_file(out_dir, branch, mace4_formulas, level, top, bottom):
     """
     fn = os.path.join(out_dir, f"level{level}_{branch}.in")
     with (open(fn, "w")) as fp:
+        fp.writelines(comment_lines)
         fp.write(sos_line)
         fp.writelines(basic_str)
         fp.write(f"\n{mace4_formulas[level-3][top]}\n")
@@ -118,7 +126,7 @@ def write_file(out_dir, branch, mace4_formulas, level, top, bottom):
 
 def gen_mace4_files(n, out_dir):
     mace4_formulas = gen_mace4_formulas(n)
-    debug_print(mace4_formulas)
+    # debug_print(mace4_formulas)
     for level in range(4, n+1):
         write_file(out_dir, 1, mace4_formulas, level, 0, 0)
         if n % 2 == 0:
@@ -130,13 +138,17 @@ def gen_mace4_files(n, out_dir):
     
 
 if __name__ == "__main__":
+    # level must be at least 4
     if len(sys.argv) > 1:
         n = int(sys.argv[1])
     else:
         n = 4
-    if len(sys.argv) > 2:
-        out_dir = sys.argv[2]
+    if n < 4:
+        print("level must be at least 4.")
     else:
-        out_dir = "."
-    v = gen_mace4_files(n, out_dir)
+        if len(sys.argv) > 2:
+            out_dir = sys.argv[2]
+        else:
+            out_dir = "."
+        v = gen_mace4_files(n, out_dir)
     
