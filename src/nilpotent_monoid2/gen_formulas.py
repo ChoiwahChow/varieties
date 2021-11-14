@@ -16,11 +16,11 @@ import sys
 
 comment_lines = ['% This Mace4 inputs file is based on the paper https://arxiv.org/pdf/1911.05817.pdf\n',
                  '% Figure 13 on page 40 shows the lattice of subvarieties of N_1_2.\n',
-                 '% Level 0 is the bottom row (with only one node 0), top level also has only one node N1_2, \n',
+                 '% There are 2 sequences, left and right, in the "ladder-shaped" diagram.\n',
+                 '% Level 1 is the bottom row, top level also has only one node N1_2, \n',
                  '% next level has one node, but all other levels have 2 nodes\n',
-                 '% Each line represent a branch, is either a left branch or a right branch.\n',
-                 '% The top ladder has both left and right branches, but the bottom ladder has only right branches.'
-                 '% The top end of the branch (line) is a variety, and the bottom end of the branch is a subvariety,',
+                 '% Each line represent an implication from lower level to higher level, or from left to right.\n',
+                 '% The top (or right) end of the branch (line) is a variety, and the bottom (or left) end of the branch is a subvariety,\n',
                  '% The aim is to find a model in the variety but not in the subvariety\n',
                  '% sos is the variety, and goals represent the subvariety.\n']
 sos_line = "\nformulas(sos).\n"
@@ -29,31 +29,27 @@ end_line = "end_of_list.\n"
 basic_str = ['(x * y) * z = x * (y * z).\n',  '(x * x) * x = x * x.\n', 'x * y = y * x.']
 
 
-def debug_print(level, ladder, branch, v):
-    print(f"level {level}, {ladder}, {branch}: {v}")
-
-
-def make_clause_lower(level):
-    """ Construct strings that Mace4 understands: e.g. (x1 * x2) * x3 for the lower ladder of a particular level
+def make_clause_left(level):
+    """ Construct strings that Mace4 understands: e.g. (x1 * x2) * x3 for the left sequence of a particular level
     Args:
-        level: the level for which the lower clauses are to be generated
+        level: the level for which the left clauses (2 of them, left and right) are to be generated
     Returns:
-        (List[str]): a list of 2 strings representing the lower clauses, e.g ["x1 * x2", "y1 * y2"]
+        (List[str]): a list of 2 strings representing the 2 clauses, e.g ["x1 * x2", "y1 * y2"]
     """
     left_clause = "x1 * x2"
     right_clause = "y1 * y2"
-    for w in range(2, level+1):
+    for w in range(3, level+1):  # note: we skip level 1 for the left branch
         left_clause = f"({left_clause}) * x{w+1}"
         right_clause = f"({right_clause}) * y{w+1}"
     return [left_clause, right_clause]
 
 
-def make_clause_upper(level):
-    """ Construct strings that Mace4 understands: e.g. (x1 * x2) * x3 for the upper ladder of a particular level
+def make_clause_right(level):
+    """ Construct strings that Mace4 understands: e.g. (x1 * x2) * x3 for the right sequence of a particular level
     Args:
-        level: the level for which the clauses for the upper ladder are to be generated
+        level: the level for which the clauses for the right sequence are to be generated
     Returns:
-        (List[str]): a list of 2 strings representing the lower clauses,  e.g ["(x1 * x1) * x2", "x1 * x2"]. 
+        (List[str]): a list of 2 strings representing the 2 clauses,  e.g ["(x1 * x1) * x2", "x1 * x2"]. 
     """
     left_clause = "x1 * x1"
     right_clause = "x1"
@@ -63,20 +59,20 @@ def make_clause_upper(level):
     return [left_clause, right_clause]
 
 
-def gen_mace4_formulas_lower(level):
-    """ generate mace4 formula for lower ladder in Fig. 13 on page 40 of the paper
+def gen_mace4_formulas_left(level):
+    """ generate mace4 formula for left sequence in Fig. 13 on page 40 of the paper
     Args:
-        level: the level for which the Mace4 formulas are to be generated for the lower ladder
+        level: the level for which the Mace4 formulas are to be generated for the left sequence
     Returns:
-        (List[List[str]]): a list of 2 items. The first is empty, the second is the formulas for the right branch
+        (List[List[str]]): a list of 2 items. The first is empty, the second is the formulas for the left branch
         e.g. [[], ['(x1 * x2) * x3 = (y1 * y2) * y3', 'x1 * x2 = y1 * y2']]
     """
-    lower = make_clause_lower(level)
-    lower_sub = make_clause_lower(level - 1)
+    lower = make_clause_left(level)
+    lower_sub = make_clause_left(level - 1)
     return [[], [f"{lower[0]} = {lower[1]}.", f"{lower_sub[0]} = {lower_sub[1]}." ]]
 
 
-def gen_mace4_formulas_upper(level):
+def gen_mace4_formulas_right(level):
     """ generate mace4 formula for lower ladder in Fig. 13 on page 40 of the paper
     Args:
         level: the level for which the Mace4 formulas are to be generated for the lower ladder
@@ -86,14 +82,14 @@ def gen_mace4_formulas_upper(level):
         e.g. [['(x1 * x1) * x2 = x1 * x2', 'x1 * x2 = y1 * y2'], ['(x1 * x1) * x2 = x1 * x2', 'x1 * x1 = x1']]
         For each branch, the first item has the formulas for the variety, and the second, the subvariety
     """
-    upper = make_clause_upper(level)
-    upper_sub = make_clause_upper(level - 1)
-    lower_sub = make_clause_lower(level - 1)
-    return [[f"{upper[0]} = {upper[1]}.", f"{lower_sub[0]} = {lower_sub[1]}." ],
+    upper = make_clause_right(level)
+    upper_sub = make_clause_right(level - 1)
+    left_sub = make_clause_left(level - 1)
+    return [[f"{upper[0]} = {upper[1]}.", f"{left_sub[0]} = {left_sub[1]}." ],
             [f"{upper[0]} = {upper[1]}.", f"{upper_sub[0]} = {upper_sub[1]}." ]]
 
 
-def write_file(out_dir, level, ladder, branch, mace_formulas):
+def write_file(out_dir, level, mace_formulas):
     """ writes out a mace4 input file. "bottom" level implies "top" level, so the "goal"
         is the "bottom" level clause so to find a model in the "bigger" algebra but not in
         the smaller algebra.
@@ -104,7 +100,7 @@ def write_file(out_dir, level, ladder, branch, mace_formulas):
         branch (str):  branch string, left or right (see Fig. 13 on page 40 of the paper)
         mace_formulas(List[str]): a list, first item is the string for sos, second item is goals
     """
-    fn = os.path.join(out_dir, f"level{level}_{ladder}_{branch}.in")
+    fn = os.path.join(out_dir, f"level{level}.in")
     with (open(fn, "w")) as fp:
         fp.writelines(comment_lines)
         fp.write(sos_line)
@@ -117,26 +113,31 @@ def write_file(out_dir, level, ladder, branch, mace_formulas):
 
 
 def gen_mace4_files(n1, n2, out_dir):
-    """
+    """ Generate all Mace4 input files from level n1 (level starts with 1) to n2 for both left sequence and right sequence
+        in Figure 13, page 40 of the paper.  But left sequence is only generated for level 3 and above
+        Left sequence L1 (0), L2 (x1x2 = y1y2), L3 (x1x2x3 = y1y2y3, ...
+        Right sequence R1 (x1^2 = x1), R2 (x1^2x2 = x1x2), ...
     """
     for level in range(n1, n2+1):
-        upper = gen_mace4_formulas_upper(level)
-        write_file(out_dir, level, "upper", "right", upper[1])
-        write_file(out_dir, level, "upper", "left", upper[0])
+        right = gen_mace4_formulas_right(level)
+        write_file(out_dir, f"U{level-1}_implies_U{level}", right[1])
+        write_file(out_dir, f"L{level}_implies_U{level}", right[0])
 
-        lower = gen_mace4_formulas_lower(level)
-        write_file(out_dir, level, "lower", "right", lower[1])
+    n1 = max(n1, 3)
+    for level in range(n1, n2+1):
+        left = gen_mace4_formulas_left(level)
+        write_file(out_dir, f"L{level-1}_implies_L{level}", left[1])
     
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
+    if len(sys.argv) > 2:
         n1 = int(sys.argv[1])
         n2 = int(sys.argv[2])
     else:
-        n1 = 2
-        n2 = 2
-    if n1 < 2 or n2 < 2 or n1 > n2:
-        print("Levels must be at least 2, and <from level> must not be greater than <to level>.")
+        n1 = 3
+        n2 = 4
+    if n1 < 2 or n1 > n2:
+        print("Levels must be at least 2, and starting level must not be greater than ending level.")
     else:
         if len(sys.argv) > 3:
             out_dir = sys.argv[3]
