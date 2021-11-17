@@ -38,7 +38,7 @@ def wait_for_slot(num_threads, thread_slots, sleep_time):
             
 
 def run_mace4(slot, key, mace_infile, outfile):
-    cp = subprocess.run(f'mace4 -t 3600 -s 90000 -f {mace_infile} > {outfile} 2>&1', capture_output=True, shell=True)
+    cp = subprocess.run(f'mace4 -t 3600 -s 10000000 -f {mace_infile} > {outfile} 2>&1', capture_output=True, shell=True)
     # results[key] = cp.stdout.read() + "   " + cp.stderr.read()
     thread_slots[slot] = None
             
