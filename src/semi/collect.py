@@ -37,7 +37,11 @@ def extract_data(file_path):
             elif line.startswith("Process ") and "(max_megs_no)" in line:
                 error = "max_megs_no"
             elif line.startswith("Process ") and "(max_sec_no)" in line:
-                error = "max_sec_no"                  
+                error = "max_sec_no"
+            elif line.startswith("Process ") and "(max_models)" in line:
+                error = "max_models"
+            elif line.startswith("palloc"):
+                error = "out of memory"          
 
     if error == "":
         return (line_no, subvariety, variety, order, cpu_time, error)
