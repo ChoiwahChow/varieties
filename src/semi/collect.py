@@ -21,11 +21,16 @@ def extract_data(file_path):
     line_no = int(names[0])
     subvariety = (int(names[1]), int(names[2]))
     variety = (int(names[4]), int(names[5].split(".")[0]))
+    cpu_time = -1
+    this_cpu_time = -1
     with (open(file_path)) as fp:
         for line in fp.readlines():
             if line.startswith("interpretation("):
                 pos = line.find(",")
                 order = int(line[16:pos])
+                pos = line.find("seconds=")
+                pos1 = line.rfind("],")
+                this_cpu_time = float(line[pos+8:pos1])
             elif line.startswith("Current CPU time: " ):
                 pos1 = line.find("(total CPU time: ")
                 pos2 = line.rfind(" seconds")
@@ -44,9 +49,9 @@ def extract_data(file_path):
                 error = "out of memory"          
 
     if error == "":
-        return (line_no, subvariety, variety, order, cpu_time, error)
+        return (line_no, subvariety, variety, order, this_cpu_time, cpu_time, error)
     else:
-        return (line_no, subvariety, variety, domain_size, cpu_time, error)
+        return (line_no, subvariety, variety, domain_size, this_cpu_time, cpu_time, error)
 
 
 def extract_all_data(out_dir):
