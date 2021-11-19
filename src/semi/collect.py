@@ -21,6 +21,7 @@ def extract_data(file_path):
     line_no = int(names[0])
     subvariety = (int(names[1]), int(names[2]))
     variety = (int(names[4]), int(names[5].split(".")[0]))
+    last_cpu_time = 0
     cpu_time = -1
     this_cpu_time = -1
     with (open(file_path)) as fp:
@@ -28,12 +29,10 @@ def extract_data(file_path):
             if line.startswith("interpretation("):
                 pos = line.find(",")
                 order = int(line[16:pos])
-                pos = line.find("seconds=")
-                pos1 = line.rfind("],")
-                this_cpu_time = float(line[pos+8:pos1])
             elif line.startswith("Current CPU time: " ):
                 pos1 = line.find("(total CPU time: ")
                 pos2 = line.rfind(" seconds")
+                last_cpu_time = cpu_time
                 cpu_time = float(line[pos1+16:pos2])
             elif line.startswith("For domain size "):
                 domain_size = int(line[16:-2])
@@ -48,6 +47,7 @@ def extract_data(file_path):
             elif line.startswith("Fatal error:  palloc,"):
                 error = "out of memory"          
 
+    this_cpu_time = cpu_time - last_cpu_time
     if error == "":
         return (line_no, subvariety, variety, order, this_cpu_time, cpu_time, error)
     else:
