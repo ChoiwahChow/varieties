@@ -54,9 +54,14 @@ def extract_data(file_path):
 
 
 def extract_all_data(out_dir):
+    all_results = list()
     for file in os.listdir(out_dir):
         results = extract_data(os.path.join(out_dir, file))
-        print(results)
+        all_results.append(results)
+    all_results.sort(key=lambda x:x[0])
+    for item in all_results:
+        print(item)
+
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
