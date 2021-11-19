@@ -21,8 +21,8 @@ def extract_data(file_path):
     subvariety = (int(names[1]), int(names[2]))
     variety = (int(names[4]), int(names[5].split(".")[0]))
     last_cpu_time = 0
-    cpu_time = -1
-    this_cpu_time = -1
+    cpu_time = 0
+    this_cpu_time = 0
     with (open(file_path)) as fp:
         for line in fp.readlines():
             if line.startswith("interpretation("):
