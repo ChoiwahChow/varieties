@@ -12,7 +12,6 @@ import os
 import sys
 
 
-
 def extract_data(file_path):
     order = -1
     error = ""
@@ -47,7 +46,7 @@ def extract_data(file_path):
             elif line.startswith("Fatal error:  palloc,"):
                 error = "out of memory"          
 
-    this_cpu_time = cpu_time - last_cpu_time
+    this_cpu_time = round(cpu_time - last_cpu_time, 2)
     if error == "":
         return (line_no, subvariety, variety, order, this_cpu_time, cpu_time, error)
     else:
