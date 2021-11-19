@@ -45,7 +45,7 @@ def extract_data(file_path):
                 error = "max_sec_no"
             elif line.startswith("Process ") and "(max_models)" in line:
                 error = "max_models"
-            elif line.startswith("palloc"):
+            elif line.startswith("Fatal error:  palloc,"):
                 error = "out of memory"          
 
     if error == "":
