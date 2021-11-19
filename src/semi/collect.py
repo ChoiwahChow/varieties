@@ -45,8 +45,8 @@ def extract_data(file_path):
                 error = "max_models"
             elif line.startswith("Fatal error:  palloc,"):
                 error = "out of memory"          
-
-    this_cpu_time = round(cpu_time - last_cpu_time, 2)
+    if error == "max_models":
+        this_cpu_time = round(cpu_time - last_cpu_time, 2)
     if error == "":
         return (line_no, subvariety, variety, order, this_cpu_time, cpu_time, error)
     else:
