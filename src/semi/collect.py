@@ -22,7 +22,6 @@ def extract_data(file_path):
     variety = (int(names[4]), int(names[5].split(".")[0]))
     last_cpu_time = 0
     cpu_time = 0
-    this_cpu_time = 0
     with (open(file_path)) as fp:
         for line in fp.readlines():
             if line.startswith("interpretation("):
@@ -44,10 +43,11 @@ def extract_data(file_path):
             elif line.startswith("Process ") and "(max_models)" in line:
                 error = "max_models"
             elif line.startswith("Fatal error:  palloc,"):
-                error = "out of memory"          
+                error = "out of memory"
+            elif line.startswith("Killed"):
+                error = "Killed"           
+    this_cpu_time = round(cpu_time - last_cpu_time, 2)
     if error == "max_models":
-        this_cpu_time = round(cpu_time - last_cpu_time, 2)
-    if error == "":
         return (line_no, subvariety, variety, order, this_cpu_time, cpu_time, error)
     else:
         return (line_no, subvariety, variety, domain_size, this_cpu_time, cpu_time, error)
