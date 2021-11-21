@@ -5,7 +5,7 @@ It looks at the output files to collect data such as the minimum order that
 has a model in a variety but not in a subvariety.
 
 First non (1,1) line: 229
-Last line: 3642
+Last line: 3648
 """
 
 import os
@@ -35,22 +35,22 @@ def extract_data(file_path):
             elif line.startswith("For domain size "):
                 domain_size = int(line[16:-2])
             elif line.startswith("Exiting with failure."):
-                error = "Exiting with failure"
+                error = f"Exiting with failure, last domain size: {domain_size}"
             elif line.startswith("Process ") and "(max_megs_no)" in line:
-                error = "exceeded memory allocation"
+                error = f"exceeded memory limit, last domain size: {domain_size}"
             elif line.startswith("Process ") and "(max_sec_no)" in line:
-                error = "exceeded time limit"
+                error = f"exceeded time limit, last domain size: {domain_size}"
             elif line.startswith("Process ") and "(max_models)" in line:
-                error = "found a model"
-            elif line.startswith("Fatal error:  palloc,"):
-                error = "out of memory"
+                error = f"found a model of order {order}"
+            elif line.startswith(f"Fatal error:  palloc"):
+                error = f"out of memory, last domain size: {domain_size}"
             elif line.startswith("Killed"):
-                error = "Killed"           
+                error = f"Killed, last domain size: {domain_size}"           
     this_cpu_time = round(cpu_time - last_cpu_time, 2)
     if error == "max_models":
         return (line_no, subvariety, variety, order, this_cpu_time, cpu_time, error)
     else:
-        return (line_no, subvariety, variety, domain_size, this_cpu_time, cpu_time, error)
+        return (line_no, subvariety, variety, domain_size, "", cpu_time, error)
 
 
 def extract_all_data(out_dir):
@@ -70,7 +70,7 @@ def compose_csv_file(results, start, end, csv_file_path):
     """
     res = {item[0]: item[1:] for item in results}
     with (open(csv_file_path, "w")) as fp:
-        fp.write('"Subvariety"," => ","Variety","Last order","Time spent on last order (s)","Total time from order 2 (s)"')
+        fp.write('"Subvariety"," => ","Variety","Last order","Time spent on last order (s)","Total time from order 2 (s)"\n')
         for idx in range(start, end+1):
             r = res.get(idx, None)
             if r is None:
@@ -88,4 +88,4 @@ if __name__ == "__main__":
     if len(sys.argv) > 2:
         csv_file_path = sys.argv[2]
     v = extract_all_data(out_dir)
-    compose_csv_file(v, 1, 3642, csv_file_path)
+    compose_csv_file(v, 1, 3648, csv_file_path)

@@ -4,8 +4,9 @@ This script is based on special pairs of varieties and subvarieties, as given by
 It generates all formulas from the given spreadsheet 
 The aim is to find a model in the variety but not in the subvariety.
 
+Excel line starts with 1
 First non (1,1) line: 229
-Last line: 3642
+Last line: 3649
 """
 
 import os
@@ -65,7 +66,7 @@ def gen_mace4_files(excel_file, varieties, out_dir):
     """
     bases, implies = read_data(excel_file)
     for line_no in varieties:
-        subvariety, variety = implies[line_no-1]
+        subvariety, variety = implies[line_no-1]  # Excel startw with 1, python startw with zero
         write_file(out_dir, line_no, variety, subvariety, bases[variety], bases[subvariety])
     
 
