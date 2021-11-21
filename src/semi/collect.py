@@ -37,11 +37,11 @@ def extract_data(file_path):
             elif line.startswith("Exiting with failure."):
                 error = "Exiting with failure"
             elif line.startswith("Process ") and "(max_megs_no)" in line:
-                error = "max_megs_no"
+                error = "exceeded memory allocation"
             elif line.startswith("Process ") and "(max_sec_no)" in line:
-                error = "max_sec_no"
+                error = "exceeded time limit"
             elif line.startswith("Process ") and "(max_models)" in line:
-                error = "max_models"
+                error = "found a model"
             elif line.startswith("Fatal error:  palloc,"):
                 error = "out of memory"
             elif line.startswith("Killed"):
@@ -61,6 +61,22 @@ def extract_all_data(out_dir):
     all_results.sort(key=lambda x:x[0])
     for item in all_results:
         print(item)
+    return all_results
+        
+        
+def compose_csv_file(results, start, end, csv_file_path):
+    """
+    (3641, (8, 2), (5, 54), 3, 0.0, 0.0, 'max_models')
+    """
+    res = {item[0]: item[1:] for item in results}
+    with (open(csv_file_path, "w")) as fp:
+        fp.write('"Subvariety"," => ","Variety","Last order","Time spent on last order (s)","Total time from order 2 (s)"')
+        for idx in range(start, end+1):
+            r = res.get(idx, None)
+            if r is None:
+                fp.write('," => ",,,,\n')
+            else:
+                fp.write(f'"{r[1]}"," => ","{r[2]}","{r[3]}","{r[4]}","{r[5]}"\n')
 
 
 if __name__ == "__main__":
@@ -68,4 +84,8 @@ if __name__ == "__main__":
         out_dir = sys.argv[1]
     else:
         out_dir = "."
+    csv_file_path = "sem.csv"
+    if len(sys.argv) > 2:
+        csv_file_path = sys.argv[2]
     v = extract_all_data(out_dir)
+    compose_csv_file(v, 1, 3642, csv_file_path)
