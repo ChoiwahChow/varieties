@@ -74,9 +74,9 @@ def compose_csv_file(results, start, end, csv_file_path):
         for idx in range(start, end+1):
             r = res.get(idx, None)
             if r is None:
-                fp.write('," => ",,,,\n')
+                fp.write('," => ",,,,,\n')
             else:
-                fp.write(f'"{r[1]}"," => ","{r[2]}","{r[3]}","{r[4]}","{r[5]}"\n')
+                fp.write(f'"{r[0]}"," => ","{r[1]}",{r[2]},{r[3]},{r[4]},"{r[5]}"\n')
 
 
 if __name__ == "__main__":
