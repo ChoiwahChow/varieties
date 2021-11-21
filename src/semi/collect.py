@@ -47,7 +47,7 @@ def extract_data(file_path):
             elif line.startswith("Killed"):
                 error = f"Killed, last domain size: {domain_size}"           
     this_cpu_time = round(cpu_time - last_cpu_time, 2)
-    if error == "max_models":
+    if error.startswith("max_models"):
         return (line_no, subvariety, variety, order, this_cpu_time, cpu_time, error)
     else:
         return (line_no, subvariety, variety, domain_size, "", cpu_time, error)
@@ -70,7 +70,7 @@ def compose_csv_file(results, start, end, csv_file_path):
     """
     res = {item[0]: item[1:] for item in results}
     with (open(csv_file_path, "w")) as fp:
-        fp.write('"Subvariety"," => ","Variety","Last order","Time spent on last order (s)","Total time from order 2 (s)"\n')
+        fp.write('"Subvariety"," => ","Variety","Last order","Time spent on last order (s)","Total time from order 2 (s)","Comment"\n')
         for idx in range(start, end+1):
             r = res.get(idx, None)
             if r is None:
