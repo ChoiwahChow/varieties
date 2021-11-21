@@ -47,7 +47,7 @@ def extract_data(file_path):
             elif line.startswith("Killed"):
                 error = f"Killed, last domain size: {domain_size}"           
     this_cpu_time = round(cpu_time - last_cpu_time, 2)
-    if error.startswith("max_models"):
+    if error.startswith("found a model of order"):
         return (line_no, subvariety, variety, order, this_cpu_time, cpu_time, error)
     else:
         return (line_no, subvariety, variety, domain_size, "", cpu_time, error)
