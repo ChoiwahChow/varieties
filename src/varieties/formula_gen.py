@@ -20,7 +20,7 @@ comment_lines = ['% This Mace4 inputs file is based on the paper https://arxiv.o
 sos_line = "\nformulas(sos).\n"
 goal_line = "\nformulas(goals).\n"
 end_line = "end_of_list.\n"
-basic_str = ['(x * y) * z = x * (y * z).\n',  'x * x = x.\n']
+basic_str = ['(x * y) * z = x * (y * z).\n',  'x * x = x.\n', '0*0=0.\n']
 
 
 def debug_print(v):

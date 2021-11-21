@@ -20,7 +20,7 @@ comment_lines = ['% The aim is to find a model in the variety but not in the sub
 sos_line = "\nformulas(sos).\n"
 goal_line = "\nformulas(goals).\n"
 end_line = "end_of_list.\n"
-basic_str = '(x * y) * z = x * (y * z).\n'
+basic_str = '(x * y) * z = x * (y * z).\n0*0=0.\n'
     
 
 def read_data(excel_file):
