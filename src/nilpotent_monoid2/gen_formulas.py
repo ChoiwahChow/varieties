@@ -26,7 +26,7 @@ comment_lines = ['% This Mace4 inputs file is based on the paper https://arxiv.o
 sos_line = "\nformulas(sos).\n"
 goal_line = "\nformulas(goals).\n"
 end_line = "end_of_list.\n"
-basic_str = ['(x * y) * z = x * (y * z).\n',  '(x * x) * x = x * x.\n', 'x * y = y * x.\n', '0*0=0.\n']
+basic_str = ['(x * y) * z = x * (y * z).\n',  '(x * x) * x = x * x.\n', 'x * y = y * x.\n']
 
 
 def make_clause_left(level):
