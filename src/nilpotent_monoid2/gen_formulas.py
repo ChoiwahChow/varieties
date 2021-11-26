@@ -26,7 +26,7 @@ comment_lines = ['% This Mace4 inputs file is based on the paper https://arxiv.o
 sos_line = "\nformulas(sos).\n"
 goal_line = "\nformulas(goals).\n"
 end_line = "end_of_list.\n"
-basic_str = ['(x * y) * z = x * (y * z).\n',  '(x * x) * x = x * x.\n', 'x * y = y * x.']
+basic_str = ['(x * y) * z = x * (y * z).\n',  '(x * x) * x = x * x.\n', 'x * y = y * x.\n']
 
 
 def make_clause_left(level):
@@ -120,8 +120,8 @@ def gen_mace4_files(n1, n2, out_dir):
     """
     for level in range(n1, n2+1):
         right = gen_mace4_formulas_right(level)
-        write_file(out_dir, f"U{level-1}_implies_U{level}", right[1])
-        write_file(out_dir, f"L{level}_implies_U{level}", right[0])
+        write_file(out_dir, f"R{level-1}_implies_R{level}", right[1])
+        write_file(out_dir, f"L{level}_implies_R{level}", right[0])
 
     n1 = max(n1, 3)
     for level in range(n1, n2+1):
