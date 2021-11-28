@@ -47,7 +47,8 @@ def run_mace4(slot, key, mace_infile, outfile):
     
 
 def already_complete(outfile):
-    cp = subprocess.run(f'tail {outfile} | grep "Exiting with 1 model." | wc -l', capture_output=True, shell=True)    
+    cp = subprocess.run(f'tail {outfile} | grep "Exiting with 1 model." | wc -l', capture_output=True, shell=True)  
+    print(cp.stdout)  
     if cp.stdout.decode("utf-8") == "1\n":
         return True
     else:
