@@ -41,14 +41,13 @@ def wait_for_slot(num_threads, thread_slots, sleep_time):
             
 
 def run_mace4(slot, key, mace_infile, outfile):
-    cp = subprocess.run(f'mace4 -t 3600 -b 20000 -f {mace_infile} > {outfile} 2>&1', capture_output=True, shell=True)
+    cp = subprocess.run(f'mace4 -t 7200 -b 20000 -f {mace_infile} > {outfile} 2>&1', capture_output=True, shell=True)
     # results[key] = cp.stdout.read() + "   " + cp.stderr.read()
     thread_slots[slot] = None
     
 
 def already_complete(outfile):
     cp = subprocess.run(f'tail {outfile} | grep "Exiting with 1 model." | wc -l', capture_output=True, shell=True)  
-    print(cp.stdout)  
     if cp.stdout.decode("utf-8") == "1\n":
         return True
     else:
