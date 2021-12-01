@@ -10,7 +10,7 @@ import time
 import subprocess
 import threading
 
-
+max_time = 3600     # to run mace4, in seconds
 max_threads = 3
 thread_slots = [None] * max_threads
 results = dict()
@@ -41,7 +41,7 @@ def wait_for_slot(num_threads, thread_slots, sleep_time):
             
 
 def run_mace4(slot, key, mace_infile, outfile):
-    cp = subprocess.run(f'mace4 -t 7200 -b 20000 -f {mace_infile} > {outfile} 2>&1', capture_output=True, shell=True)
+    cp = subprocess.run(f'mace4 -t {max_time} -b 20000 -f {mace_infile} > {outfile} 2>&1', capture_output=True, shell=True)
     # results[key] = cp.stdout.read() + "   " + cp.stderr.read()
     thread_slots[slot] = None
     
