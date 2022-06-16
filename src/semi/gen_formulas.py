@@ -53,7 +53,8 @@ def write_file(out_dir, line_no, variety, subvariety, variety_formula, subvariet
         fp.write(f"\n{variety_formula}\n")
         fp.write(end_line)
         fp.write(goal_line)
-        fp.write(f"{subvariety_formula}\n")
+        goals = f"{subvariety_formula}"
+        fp.write(f"{goals.replace('. ', ' & ')}\n")
         fp.write(end_line)
 
 
